@@ -122,5 +122,38 @@ public class ProductDAO {
 
         }
     }
+    public List<Product> getLowStock() throws SQLException {
+        List<Product> list = new ArrayList<>();
+        String sql = "SELECT * FROM products WHERE quantity <= reorder_level";
+        try(Connection con=DBConnection.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql) )
+            {
+                while(rs.next()){
+                    list.add(new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("category"),
+                        rs.getDouble("price"),
+                        rs.getInt("quantity"),
+                        rs.getInt("reorder_level")));
+                }
+
+            }
+            return list;
+
+    }
+    public double getTotalStockValue() throws SQLException {
+        String sql = "SELECT SUM(price * quantity) AS total FROM products";
+        try(Connection con=DBConnection.getConnection();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql) ){
+                if(rs.next()){
+                    return rs.getDouble("total");
+
+                }
+            }
+        return 0;
+    }
 }
 

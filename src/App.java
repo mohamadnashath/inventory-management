@@ -1,6 +1,7 @@
 import dao.ProductDAO;
 import model.Product;
-
+import dao.TransactionDAO;
+import model.Transaction;
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,6 +9,7 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) {
         ProductDAO dao = new ProductDAO();
+        TransactionDAO tdao = new TransactionDAO();
         Scanner sc = new Scanner(System.in);
 
         while(true){
@@ -19,7 +21,10 @@ public class App {
             System.out.println("5. Search product");
             System.out.println("6. Stock in");
             System.out.println("7. Stock out");
-            System.out.println("8. Exit");
+            System.out.println("8. Low stock alert");
+            System.out.println("9. Transaction history");
+            System.out.println("10. Stock value report");
+            System.out.println("11. Exit");
             System.out.print("Choice: ");
             int choice = sc.nextInt();
             sc.nextLine();
@@ -83,6 +88,28 @@ public class App {
                     int qty = sc.nextInt();
                     dao.stockOut(id, qty);
                 }else if(choice==8){
+                    List<Product> low = dao.getLowStock();
+                    if(low.isEmpty()){
+                        System.out.println("All stock levels are fine");
+                    }else{
+                        System.out.println("LOW STOCK:");
+                        for(Product p : low){
+                            System.out.println(p);
+                        }
+                    }
+                }else if(choice==9){
+                    List<Transaction> history = tdao.getAllTransactions();
+                    if(history.isEmpty()){
+                        System.out.println("No transactions yet");
+                    }else{
+                        for(Transaction t : history){
+                            System.out.println(t);
+                        }
+                    }
+                }else if(choice==10){
+                    double total = dao.getTotalStockValue();
+                    System.out.println("Total stock value: Rs." + total);
+                }else if(choice==11){
                     System.out.println("Bye!");
                     break;
                 }
